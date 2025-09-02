@@ -2,7 +2,7 @@ console.log("Hey! I Got The Index.js File")
 
 // Initialize the news api parameters
 let source = 'the-times-of-india';
-let apiKey = 'b063b81b251e46279f337b896f84b440'
+let apiKey = 'b063b81b251e46279fb896f84b440'
 
 // Grab the news container
 let newsAccordion = document.getElementById("newsAccordion")
@@ -44,5 +44,6 @@ xhr.onload = function (){
         console.log("something went wrong, please try again")
     }
 }
+
 
 xhr.send()
