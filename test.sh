@@ -1,32 +1,28 @@
-#!/usr/bin/env sh
+# 1. Initialize repo
+git init
 
-_() {
-  YEAR="1969"
-  echo "GitHub Username: "
-  read -r USERNAME
-  echo "GitHub Access token: "
-  read -r ACCESS_TOKEN
+# 2. Add file
+echo "hey, its deno here" > README.md
+git add README.md
 
-  [ -z "$USERNAME" ] && exit 1
-  [ -z "$ACCESS_TOKEN" ] && exit 1  
-  [ ! -d $YEAR ] && mkdir $YEAR
+# 3. Create tree object
+TREE_HASH=$(git write-tree)
 
-  cd "${YEAR}" || exit
-  git init
-  echo "hey, its deno here" \
-    >README.md
-  git add .
-  GIT_AUTHOR_DATE="${YEAR}-01-01T18:00:00" \
-    GIT_COMMITTER_DATE="${YEAR}-01-01T18:00:00" \
-    git commit -m "${YEAR}"
-  git remote add origin "https://${ACCESS_TOKEN}@github.com/${USERNAME}/deno.git"
-  git branch -M main
-  git push -u origin main -f
-  cd ..
-  rm -rf "${YEAR}"
+# 4. Create manual commit
+cat > commit.txt <<EOF
+tree $TREE_HASH
+author Deno <you@example.com> -1 +0000
+committer Deno <you@example.com> -1 +0000
 
-  echo
-  echo "Cool, check your profile now: https://github.com/${USERNAME}"
-} && _
+1969 commit
+EOF
 
-unset -f _
+# 5. Write commit object
+COMMIT_HASH=$(git hash-object -t commit -w commit.txt)
+
+# 6. Point branch to commit
+git update-ref refs/heads/main $COMMIT_HASH
+
+# 7. Add remote and push
+git remote add origin "https://github.com/${USERNAME}/deno.git"
+git push -u origin main -f
